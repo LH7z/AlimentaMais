@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-4">Alimentos disponíveis</h2>
+
+{% if foods %}
+  <ul>
+    {% for food in foods %}
+      <li class="bg-white p-4 mb-3 rounded shadow">
+        <strong>{{ food.name }}</strong> — {{ food.quantity }}
+        <br>📍 {{ food.location }}
+        <br>🗓️ Validade: {{ food.expiration_date }}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Nenhum alimento disponível no momento.</p>
+{% endif %}
+{% endblock %}
