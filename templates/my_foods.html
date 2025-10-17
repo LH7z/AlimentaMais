@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-4">Meus alimentos cadastrados</h2>
+
+{% if foods %}
+  <ul>
+    {% for food in foods %}
+      <li class="bg-white p-4 mb-3 rounded shadow">
+        <strong>{{ food.name }}</strong> — {{ food.quantity }}
+        <br>📍 {{ food.location }}
+        <br>🗓️ Validade: {{ food.expiration_date.strftime("%d/%m/%Y") }}
+        <br> Status: {{ food.status }}
+        <br> Reservado por: {{ food.reserver.username if food.reserver else 'Ninguém' }}
+        <br>
+        <div class="inline-block mt-2.5">
+          <a href="{{ url_for('delete_food', food_id=food.id) }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-200" >Excluir</a>
+          <a href="{{ url_for('edit_food', food_id=food.id) }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-200">Editar</a>
+          <a href="{{ url_for('change_status', food_id=food.id) }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors duration-200">Trocar status</a>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Você não cadastrou nenhum alimento ainda.</p>
+{% endif %}
+{% endblock %}

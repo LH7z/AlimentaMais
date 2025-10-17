@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-4">Meus alimentos reservados</h2>
+{% if foods %}
+  <ul>
+    {% for food in foods %}
+      <li class="bg-white p-4 mb-3 rounded shadow">
+        <strong>{{ food.name }}</strong> — {{ food.quantity }}
+        <br>📍 {{ food.location }}
+        <br>🗓️ Validade: {{ food.expiration_date.strftime("%d/%m/%Y") }}
+        <br> Status: <strong>{{ food.status }}</strong>
+        <br> Cadastrado por: {{ food.owner.username if food.owner else 'Anônimo' }}
+        <br>
+        <div class="inline-block mt-2.5">
+          <a href="{{ url_for('cancel_reservation', food_id=food.id) }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-200" >Cancelar Reserva</a>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Você não reservou nenhum alimento ainda.</p>
+{% endif %}
+{% endblock %}
