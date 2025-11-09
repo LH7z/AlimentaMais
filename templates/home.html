@@ -1,5 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
+
+<form method="GET" action="{{ url_for('home') }}" class="mb-6 flex flex-wrap gap-3 items-end">
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Buscar alimento</label>
+    <input type="text" name="busca" placeholder="Digite o nome..."
+           value="{{ request.args.get('busca', '') }}"
+           class="border border-gray-300 rounded px-3 py-2 w-60">
+  </div>
+
+  <!-- <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+    <select name="status" class="border border-gray-300 rounded px-3 py-2 w-48">
+      <option value="">Todos</option>
+      <option value="disponível" {% if request.args.get('status') == 'disponível' %}selected{% endif %}>Disponível</option>
+      <option value="reservado" {% if request.args.get('status') == 'indisponível' %}selected{% endif %}>Reservado</option>
+    </select>
+  </div> -->
+
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Localização</label>
+    <input type="text" name="location" placeholder="Ex: Av. Central, 123"
+           value="{{ request.args.get('location', '') }}"
+           class="border border-gray-300 rounded px-3 py-2 w-48">
+  </div>
+
+  <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-200">
+    Filtrar
+  </button>
+</form>
+
+
+
+
+
+
 <h2 class="text-2xl font-semibold mb-4">Alimentos disponíveis</h2>
 
 {% if foods %}

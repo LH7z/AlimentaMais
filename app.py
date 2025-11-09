@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from datetime import datetime
 from database import db
+from database import case
 from models import Food, User
 from flask_cors import CORS
 from flask_login import UserMixin , login_user , LoginManager , login_required , logout_user, current_user
@@ -66,9 +67,33 @@ def logout():
 
 @app.route('/')
 def home():
-    foods = Food.query.filter_by(status="disponível").all()
-    return render_template('home.html', foods=foods)
+    busca = request.args.get('busca', '').strip()
+    location = request.args.get('location', '').strip()
 
+    query = Food.query
+    order_criteria = []
+
+    if busca:
+        name_relevance = case(
+            (Food.name.ilike(f'{busca}%'), 1),
+            (Food.name.ilike(f'%{busca}%'), 2),
+            else_=3
+        ).label('name_relevance')
+        order_criteria.append(name_relevance)
+    if location:
+        location_relevance = case(
+            (Food.location.ilike(f'{location}%'), 1),
+            (Food.location.ilike(f'%{location}%'), 2),
+            else_=3
+        ).label('location_relevance')
+        order_criteria.append(location_relevance)
+
+    order_criteria.append(Food.id.asc())
+
+    query = query.order_by(*order_criteria)
+
+    foods = query.all()
+    return render_template('home.html', foods=foods)
 
 @app.route('/my_foods')
 @login_required
@@ -118,6 +143,9 @@ def add_food():
     if request.method == 'POST':
         name = request.form['name']
         quantity = request.form['quantity']
+        if datetime.strptime(request.form['expiration_date'], '%Y-%m-%d').date() < datetime.today().date():
+            flash('A data de validade não pode ser no passado.', 'danger')
+            return redirect(url_for('add_food'))
         expiration_date = datetime.strptime(request.form['expiration_date'], '%Y-%m-%d').date()
         location = request.form['location']
 
